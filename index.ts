@@ -17,57 +17,83 @@ app.use((req, res, next) => {
     next();
 });
 
-app.all('/', (request, response) => {
-    response.set('Content-Type', 'image/png');
-	getChart().then((buffer: any) => {
-        response.status(200).send(buffer, 'binary')
-    });
+app.get('/chart', (request, response) => {
+    if (request && request.query && request.query.labels && request.query.values){
+        response.set('Content-Type', 'image/png');
+        getChart(request.query.labels, request.query.values, request.query.title).then((buffer: any) => {
+            response.status(200).send(buffer);
+        });
+    } else {
+        response.status(500).send('Error: Invalid chart query\n\nExpected labels, values, title (optional)');
+    }
 });
 
 app.listen(app.get('port'), () => {
   console.log('App running on port', app.get('port'));
 });
 
-let chartConfig = {
-    type: 'horizontalBar',
-    data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
-        }
-    }
-}
-
-function getChart(): any {
-    let chartNode = new ChartjsNode(600, 600);
-    return chartNode.drawChart(chartConfig).then(() => {
+function getChart(labels: string, values: string, title?: string): any {
+    let chartNode = new ChartjsNode(800, 800);
+    return chartNode.drawChart(getConfigFromRequest(labels, values, title)).then(() => {
         return chartNode.getImageBuffer('image/png');
     })
+}
+
+function splitListString(listString: string): Array<string> {
+    return listString.split(/\s*,\s*/g);
+}
+
+function getColorList(n: number): Array<string> {
+    let colors = ['#4C92FF', '#E6544A', '#FFC51E', '#44C45D', '#90DA31', '#5CC4F8', '#F47846', '#7879FF', '#A458D8', '#D858A3', '#FF9CD6'];
+    let l = Math.ceil(n/colors.length);
+    let colorList = colors;
+    for (let i = 0; i < l; i++){
+        colorList = colorList.concat(colors);
+    }
+    return colorList;
+}
+
+function getConfigFromRequest(labels: string, values: string, title?: string): any {
+    return {
+        type: 'horizontalBar',
+        data: {
+            labels: splitListString(labels),
+            datasets: [{
+                label: '',
+                data: splitListString(values).map((s: string): number => parseInt(s)),
+                backgroundColor: getColorList(labels.length),
+                borderWidth: 0
+            }]
+        },
+        options: {
+            title: {
+                display: title ? true : false,
+                fontSize: 24,
+                fontColor: '#000',
+                padding: 20,
+                text: title ? title : ''
+            },
+            legend: {
+                display: false
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        fontSize: 20,
+                        fontColor: '#666',
+                        fontStyle: 'bold'
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        fontSize: 16,
+                        fontColor: '#666',
+                        fontStyle: 'bold'
+                    }
+                }]
+            }
+        }
+    }
 }
