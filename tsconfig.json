@@ -3,13 +3,6 @@
         "module": "commonjs",
         "target": "es6",
         "noImplicitAny": false,
-        "sourceMap": false,
-        "typeRoots": ["./node_modules/@types"],
-            "types": [
-                "node",
-                "request",
-                "rx",
-                "chartjs"
-            ]
+        "sourceMap": false
     }
 }

@@ -2,12 +2,12 @@
   "name": "limitless-temple",
   "version": "0.1.0",
   "engines": {
-    "node": "6.6.0",
+    "node": "6.10.0",
     "npm": "4.0.5"
   },
   "main": "index.js",
   "scripts": {
-    "start": "npm install && tsc && node index.js"
+    "start": "npm install && ./node_modules/typescript/bin/tsc && node index.js"
   },
   "dependencies": {
     "@types/chartjs": "0.0.29",
