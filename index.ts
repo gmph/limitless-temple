@@ -20,7 +20,7 @@ app.use((req, res, next) => {
 app.all('/', (request, response) => {
     response.set('Content-Type', 'image/png');
 	getChart().then((buffer: any) => {
-        response.send(buffer, 'binary')
+        response.status(200).send(buffer, 'binary')
     });
 });
 
