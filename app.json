@@ -1,6 +1,5 @@
 {
-  "name": "Damp Springs",
+  "name": "Limitless Temple",
   "description": "",
-  "repository": "https://github.com/gmph/damp-springs",
-  "keywords": ["node", "express", "static"],
+  "repository": "https://github.com/gmph/limitless-temple",
 }
