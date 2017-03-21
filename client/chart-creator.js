@@ -12,6 +12,6 @@ $('#create-chart').click(function(){
 });
 
 function getChartUrlFromParams(labels, values){
-    var chartBaseUrl = "http://localhost:5000/chart";
+    var chartBaseUrl = "https://limitless-temple-40831.herokuapp.com/chart";
     return chartBaseUrl + "?labels=" + labels.join(',') + "&values=" + values.join(',');
 }
