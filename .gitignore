@@ -39,5 +39,8 @@ jspm_packages
 # Typescript created JS files
 *.js
 
+# Allow client JS files
+!client/*.js
+
 # Allow underscore JS files
 !_*.js
