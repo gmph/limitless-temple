@@ -1,5 +1,8 @@
 $(document).on('click', '#create-chart', updateChartFromForm);
-$(document).on('focus keyup', '.chart-form .chart-bar input', updateChartUI);
+$(document).on('focus keyup', '.chart-form .chart-bar input', function(e){
+    this.setAttribute('value', this.value);
+    updateChartUI();
+});
 $(document).on('error', '#chart-image', setSrcToDefaultUrl);
 $(document).ready(init);
 
@@ -11,6 +14,7 @@ function setSrcToDefaultUrl(element){
     var $element = $(element);
     var exampleChart = {
         'title': 'Example store performance',
+        'type': 'hor',
         'labels': ['York', 'Glasgow', 'Edinburgh'],
         'values': [34, 28, 47]
     }
@@ -23,8 +27,8 @@ function updateChartFromForm(){
 }
 
 function getChartUrlFromChartData(chartData){
-    var chartBaseUrl = "https://limitless-temple-40831.herokuapp.com/chart";
-    return chartBaseUrl + "?title=" + chartData.title + "&labels=" + chartData.labels.join(',') + "&values=" + chartData.values.join(',');
+    var chartBaseUrl = location.protocol + '//' + location.host + '/chart';
+    return chartBaseUrl + "?title=" + chartData.title + "&labels=" + chartData.labels.join(',') + "&values=" + chartData.values.join(',') + "&type=" + chartData.type;
 }
 
 function updateChartUI(){
@@ -36,9 +40,10 @@ function updateDynamicChartSizes(){
     var chartData = getChartData();
     var maxValue = getMaxOfArray(chartData.values);
     var limit = maxValue * 1.429;
-    var percentValues = chartData.values.map((value) => Math.round(value / limit * 100));
-    $('.chart-form .chart-bar').each((i, bar) => {
-        var $bar = $(bar);
+    var percentValues = chartData.values.map((value) => isNaN(value) ? 0 : Math.round(value / limit * 100));
+    $('.chart-form .percentage-bar').css('width', '0');
+    $('.chart-form .chart-bar .value:not([value=""])').each((i, value) => {
+        var $bar = $(value).closest('.chart-bar');
         $bar.find('.percentage-bar').css('width', percentValues[i] + '%');
     })
 }
@@ -48,19 +53,25 @@ function getMaxOfArray(numArray){
 }
 
 function getChartData(){
-    var labels = [],
-        values = [];
+    var labels = [];
+    var values = [];
+    var units = "";
+    var title = $('.chart-form .chart-title').val();
+    var type = $('.chart-form .chart-type').val();
     $('.chart-form .label').each((i, label) => {
         var value = $('.chart-form .value').get(i);
         if (chartBarIsValid(label, value)) {
+            var barUnits = value.value.replace(/[^£$%€¢¥km]/g,'').split('')[0];
+            if (barUnits && barUnits.length) units = value.value.replace(/[^£$%€¢¥km]/g,'').split('')[0];
             labels.push(label.value && label.value.length ? label.value : '–');
-            values.push(value.value && value.value.length ? value.value : 0);
+            values.push(value.value && value.value.length ? parseFloat(value.value.replace(/[^0-9\.\-]/g,'')) : 0);
         }
     });
     return {
-        'title' : $('.chart-form .title').val(),
-        'labels': labels,
-        'values': values
+        'title' : units.length ? (title ? title + ' (' + units + ')' : units) : title,
+        'type' : type,
+        'labels' : labels,
+        'values' : values
     }
 }
 
@@ -91,6 +102,6 @@ function updateChartBarCount(){
 function addChartBar(){
     var $chartBars = $('.chart-form .chart-bar');
     var n = $chartBars.length + 1;
-    var $chartBar = $('<div class="chart-bar"><input class="label" placeholder="Bar '+n+'" /><input class="value" placeholder="Value" /><div class="percentage-bar"></div></div>');
+    var $chartBar = $('<div class="chart-bar"><input class="label" placeholder="Label '+n+'" value="" /><input class="value" placeholder="Value" value="" /><div class="percentage-bar"></div></div>');
     $('.chart-form').append($chartBar);
 }

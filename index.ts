@@ -22,7 +22,7 @@ app.use((req, res, next) => {
 app.get('/chart', (request, response) => {
     if (request && request.query && request.query.labels && request.query.values){
         response.set('Content-Type', 'image/png');
-        getChart(request.query.labels, request.query.values, request.query.title).then((buffer: any) => {
+        getChart(request.query.labels, request.query.values, request.query.title, request.query.type).then((buffer: any) => {
             response.status(200).send(buffer);
         });
     } else {

@@ -7,28 +7,36 @@
 <![endif]-->
 
     <head>
-        <title>Chart Creator</title>
+        <title>Create a chart</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href="./main.css">
     </head>
     <body>
         <div class="container">
             <div class="chart-form">
-                <h1>Chart Creator</h1>
-                <input class="title" placeholder="Title" />
+                <h1>Create a chart</h1>
+                <input class="chart-title" placeholder="Title" />
+                <div class="chart-type-container">
+                    <select class="chart-type">
+                        <option value="hor">Horizontal bar</option>
+                        <option value="ver">Vertical bar</option>
+                        <option value="line">Line</option>
+                        <option value="doughnut">Doughnut</option>
+                    </select>
+                </div>
                 <div class="chart-bar">
-                    <input class="label" placeholder="Bar 1" />
-                    <input class="value" placeholder="Value" />
+                    <input class="label" placeholder="Label 1" value="" />
+                    <input class="value" placeholder="Value" value="" />
                     <div class="percentage-bar"></div>
                 </div>
                 <div class="chart-bar">
-                    <input class="label" placeholder="Bar 2" />
-                    <input class="value" placeholder="Value" />
+                    <input class="label" placeholder="Label 2" value="" />
+                    <input class="value" placeholder="Value" value="" />
                     <div class="percentage-bar"></div>
                 </div>
                 <div class="chart-bar">
-                    <input class="label" placeholder="Bar 3" />
-                    <input class="value" placeholder="Value" />
+                    <input class="label" placeholder="Label 3" value="" />
+                    <input class="value" placeholder="Value" value="" />
                     <div class="percentage-bar"></div>
                 </div>
             </div>
