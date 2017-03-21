@@ -1,10 +1,12 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
-import { getChart } from './chart';
+import { getChart } from './api/chart';
 
 let app = express();
 
 app.set('port', (process.env.PORT || 5000));
+
+app.use(express.static('client'));
 
 app.use(bodyParser.urlencoded({
   extended: true

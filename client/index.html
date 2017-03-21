@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!--[if IE]>
+<meta http-equiv="X-UA-Compatible" content="IE=100" />
+<style type="text/css">
+/* IE CSS HERE */
+<style>
+<![endif]-->
+
+    <head>
+        <title>Chart Creator</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="./main.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="chart-form">
+                <h1>Chart Creator</h1>
+                <div class="chart-bar">
+                    <input class="label" placeholder="Label for bar 1" />
+                    <input class="value" placeholder="Value" />
+                </div>
+                <div class="chart-bar">
+                    <input class="label" placeholder="Label for bar 3" />
+                    <input class="value" placeholder="Value" />
+                </div>
+                <div class="chart-bar">
+                    <input class="label" placeholder="Label for bar 3" />
+                    <input class="value" placeholder="Value" />
+                </div>
+            </div>
+            <button id="create-chart" class="submit">Create chart</button>
+            <div class="chart-result">
+                <img id="chart-image" src="http://localhost:5000/chart?title=Example&labels=Leads,Glasgow,Edinburgh&values=34,28,47"/>
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="./chart.js"></script>
+
+    </body>
+
+</html>
