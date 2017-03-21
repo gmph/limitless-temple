@@ -2,7 +2,7 @@ import * as ChartjsNode from 'chartjs-node';
 
 export function getChart(labels: string, values: string, title?: string, type?: string): any {
     let config = getConfigFromRequest(labels, values, title, type);
-    let chartNode = new ChartjsNode(config.type == 'doughnut' ? 600 : 800, 104*(splitListString(labels).length+1));
+    let chartNode = new ChartjsNode(config.type == 'doughnut' ? 600 : 800, config.type == 'doughnut' ? 600 : 104*(splitListString(labels).length+1));
     return chartNode.drawChart(config).then(() => {
         let buffer = chartNode.getImageBuffer('image/png');
         chartNode.destroy();
