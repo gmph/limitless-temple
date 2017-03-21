@@ -1,5 +1,5 @@
 $(document).on('click', '#create-chart', updateChartFromForm);
-$(document).on('keyup', '.chart-form .chart-bar input', updateDynamicChartSizes);
+$(document).on('focus keyup', '.chart-form .chart-bar input', updateChartUI);
 $(document).on('error', '#chart-image', setSrcToDefaultUrl);
 $(document).ready(init);
 
@@ -25,6 +25,11 @@ function updateChartFromForm(){
 function getChartUrlFromChartData(chartData){
     var chartBaseUrl = "https://limitless-temple-40831.herokuapp.com/chart";
     return chartBaseUrl + "?title=" + chartData.title + "&labels=" + chartData.labels.join(',') + "&values=" + chartData.values.join(',');
+}
+
+function updateChartUI(){
+    updateDynamicChartSizes();
+    updateChartBarCount();
 }
 
 function updateDynamicChartSizes(){
@@ -63,7 +68,29 @@ function chartBarIsValid(label, value){
     return label.value && label.value.length || value.value && value.value.length;
 }
 
-function createChartBar(){
-    var $chartBar = $('<div class="chart-bar"><input class="label" placeholder="Bar 2" /><input class="value" placeholder="Value" /><div class="percentage-bar"></div></div>');
-    
+function updateChartBarCount(){
+    var $chartBars = $('.chart-form .chart-bar');
+    var validity = $chartBars.map((i, chartBar) => {
+        var $chartBar = $(chartBar);
+        var validValue = $chartBar.find('.value').val().length != 0;
+        var validLabel = $chartBar.find('.label').val().length != 0;
+        return (i < 2 || validLabel || validValue);
+    })
+    var maxValid = -1;
+    for (var i = 0; i < validity.length; i++){
+        if (validity[i]) maxValid = i;
+    }
+    if (maxValid + 1 >= $chartBars.length) {
+        addChartBar();
+    }
+    for (var i = 0; i < $chartBars.length; i++){
+        if (i > 2 && maxValid + 1 < i) $chartBars.eq(i).remove();
+    }
+}
+
+function addChartBar(){
+    var $chartBars = $('.chart-form .chart-bar');
+    var n = $chartBars.length + 1;
+    var $chartBar = $('<div class="chart-bar"><input class="label" placeholder="Bar '+n+'" /><input class="value" placeholder="Value" /><div class="percentage-bar"></div></div>');
+    $('.chart-form').append($chartBar);
 }
