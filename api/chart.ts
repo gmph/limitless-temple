@@ -30,7 +30,7 @@ function getConfigFromRequest(labels: string, values: string, title?: string): a
             labels: splitListString(labels),
             datasets: [{
                 label: '',
-                data: splitListString(values).map((s: string): number => parseInt(s)),
+                data: splitListString(values).map((s: string): number => parseFloat(s)),
                 backgroundColor: getColorList(labels.length),
                 borderWidth: 0
             }]
