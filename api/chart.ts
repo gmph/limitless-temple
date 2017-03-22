@@ -10,6 +10,53 @@ export function getChart(labels: string, values: string, title?: string, type?: 
     })
 }
 
+function getConfigFromRequest(labels: string, values: string, title?: string, type?: string): any {
+    let validType = getValidChartType(type);
+    return {
+        type: validType,
+        data: {
+            labels: splitListString(labels),
+            datasets: [{
+                label: '',
+                data: splitListString(values).map((s: string): number => parseFloat(s)),
+                backgroundColor: getConfigDatasetBackgroundColorForLabelsAndType(labels, validType),
+                borderWidth: 0,
+                lineTension: 0.2,
+                pointRadius: 4,
+                pointBackgroundColor: 'rgba(0,0,0,.5)',
+                xAxisID : '0',
+                yAxisID : '1'
+            }]
+        },
+        options: {
+            title: {
+                display: title ? true : false,
+                fontSize: 24,
+                fontColor: '#000',
+                padding: 32,
+                text: title ? title : ''
+            },
+            legend: getConfigLegendForType(validType),
+            layout: {
+                padding: {
+                    top: title ? 8 : 32,
+                    left: 32,
+                    bottom: 20,
+                    right: 32
+                }
+            },
+            scales: getConfigScalesForType(validType),
+            plugins: {
+                beforeDraw: function(chartInstance) {
+                    var ctx = chartInstance.chart.ctx;
+                    ctx.fillStyle = "white";
+                    ctx.fillRect(0, 0, chartInstance.chart.width, chartInstance.chart.height);
+                }
+            }
+        }
+    }
+}
+
 function splitListString(listString: string): Array<string> {
     return listString.split(/\s*,\s*/g);
 }
@@ -34,20 +81,9 @@ function getValidChartType(type: string){
     return type in types ? types[type] : types[Object.keys(types)[0]];
 }
 
-function getConfigFromRequest(labels: string, values: string, title?: string, type?: string): any {
-    let validType = getValidChartType(type);
-    let legend = validType == 'doughnut' ? {
-        display: true,
-        position: 'right',
-        labels: {
-            fontSize: 16,
-            fontStyle: 'bold',
-            colorColor: '#666'
-        }
-    } : {
-        display: false
-    }
-    let scales = validType == 'doughnut' ?  { 
+function getConfigScalesForType(type: string){
+    let isDoughnutType = type == 'doughnut';
+    let doughnutTypeScales = { 
             display: false,
             yAxes: [{
                 ticks: { display: false },
@@ -63,7 +99,8 @@ function getConfigFromRequest(labels: string, values: string, title?: string, ty
                     drawBorder: false
                 }
             }] 
-        } : {
+        }
+        let otherTypeScales = {
         yAxes: [{
             id: '1',
             ticks: {
@@ -84,47 +121,27 @@ function getConfigFromRequest(labels: string, values: string, title?: string, ty
             }
         }]
     }
-    return {
-        type: validType,
-        data: {
-            labels: splitListString(labels),
-            datasets: [{
-                label: '',
-                data: splitListString(values).map((s: string): number => parseFloat(s)),
-                backgroundColor: validType == 'line' ? getColorList(labels.length)[0] : getColorList(labels.length),
-                borderWidth: 0,
-                lineTension: 0.2,
-                pointRadius: 4,
-                pointBackgroundColor: 'rgba(0,0,0,.5)',
-                xAxisID : '0',
-                yAxisID : '1'
-            }]
-        },
-        options: {
-            title: {
-                display: title ? true : false,
-                fontSize: 24,
-                fontColor: '#000',
-                padding: 32,
-                text: title ? title : ''
-            },
-            legend: legend,
-            layout: {
-                padding: {
-                    top: title ? 8 : 32,
-                    left: 32,
-                    bottom: 20,
-                    right: 32
-                }
-            },
-            scales: scales,
-            plugins: {
-                beforeDraw: function(chartInstance) {
-                    var ctx = chartInstance.chart.ctx;
-                    ctx.fillStyle = "white";
-                    ctx.fillRect(0, 0, chartInstance.chart.width, chartInstance.chart.height);
-                }
-            }
+    return isDoughnutType ? doughnutTypeScales : otherTypeScales;
+}
+
+function getConfigLegendForType(type){
+    let isDoughnutType = type == 'doughnut';
+    let doughnutTypeLegend = {
+        display: true,
+        position: 'right',
+        labels: {
+            fontSize: 16,
+            fontStyle: 'bold',
+            colorColor: '#666'
         }
     }
+    let otherTypeLegend = {
+        display: false
+    }
+    return isDoughnutType ? doughnutTypeLegend : otherTypeLegend;
+}
+
+function getConfigDatasetBackgroundColorForLabelsAndType(labels: string, type: string){
+    let isLineType = type == 'line';
+    return isLineType ? getColorList(labels.length)[0] : getColorList(labels.length)
 }
